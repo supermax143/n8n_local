@@ -1,0 +1,64 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+        "label": "n8n: Start",
+        "type": "shell",
+        "command": "${workspaceFolder}\\start.bat",
+        "windows": {
+            "command": "${workspaceFolder}\\start.bat"
+        },
+        "problemMatcher": [],
+        "presentation": {
+            "reveal": "always",
+            "panel": "new",
+            "focus": false
+        },
+        "runOptions": {
+            "runOn": "default"
+        }
+    },
+    {
+        "label": "n8n: Start with Tunnel",
+        "type": "shell",
+        "command": "${workspaceFolder}\\start-tunnel.bat",
+        "windows": {
+            "command": "${workspaceFolder}\\start-tunnel.bat"
+        },
+        "problemMatcher": [],
+        "presentation": {
+            "reveal": "always",
+            "panel": "new",
+            "focus": false
+        },
+        "runOptions": {
+            "runOn": "default"
+        }
+    },
+    {
+        "label": "n8n: Stop",
+        "type": "shell",
+        "command": "${workspaceFolder}\\stop.bat",
+        "windows": {
+            "command": "${workspaceFolder}\\stop.bat"
+        },
+        "problemMatcher": [],
+        "presentation": {
+            "reveal": "always",
+            "panel": "new"
+        }
+    },
+    {
+        "label": "n8n: Open in Browser",
+        "type": "shell",
+        "command": "${workspaceFolder}\\open.bat",
+        "windows": {
+            "command": "${workspaceFolder}\\open.bat"
+        },
+        "problemMatcher": [],
+        "presentation": {
+            "reveal": "never"
+        }
+    }
+]
+}
