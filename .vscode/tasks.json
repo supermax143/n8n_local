@@ -76,6 +76,19 @@
         "runOptions": {
             "runOn": "default"
         }
+    },
+    {
+        "label": "Get ngrok URL",
+        "type": "shell",
+        "command": "${workspaceFolder}\\get-ngrok-url.bat",
+        "windows": {
+            "command": "${workspaceFolder}\\get-ngrok-url.bat"
+        },
+        "problemMatcher": [],
+        "presentation": {
+            "reveal": "always",
+            "panel": "new"
+        }
     }
 ]
 }

@@ -4,3 +4,5 @@ node_modules/
 
 ngrok.yml
 .ngrok/
+ngrok.exe
+.env
