@@ -59,6 +59,23 @@
         "presentation": {
             "reveal": "never"
         }
+    },
+    {
+        "label": "n8n: Start with ngrok",
+        "type": "shell",
+        "command": "${workspaceFolder}\\start-ngrok.bat",
+        "windows": {
+            "command": "${workspaceFolder}\\start-ngrok.bat"
+        },
+        "problemMatcher": [],
+        "presentation": {
+            "reveal": "always",
+            "panel": "new",
+            "focus": false
+        },
+        "runOptions": {
+            "runOn": "default"
+        }
     }
 ]
 }
