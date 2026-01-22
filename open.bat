@@ -1,0 +1,3 @@
+@echo off
+echo Opening n8n in browser...
+start http://localhost:5678

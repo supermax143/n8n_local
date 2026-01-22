@@ -15,11 +15,13 @@ npm install
 **Windows (BAT):**
 - Двойной клик по `start.bat` для запуска
 - Двойной клик по `stop.bat` для остановки
+- Двойной клик по `open.bat` для открытия в браузере
 
 **Windows (PowerShell):**
 ```powershell
 .\start.ps1    # Запуск
 .\stop.ps1     # Остановка
+.\open.ps1     # Открыть в браузере
 ```
 
 ### Способ 2: Через npm
