@@ -25,16 +25,38 @@ if (Test-Path $ngrokPath) {
 }
 
 Write-Host "Starting ngrok tunnel..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "& '$ngrokCmd' http 5678" -WindowStyle Normal
+# Start ngrok without spawning a separate PowerShell window (more reliable in tasks/CI).
+# Capture logs so we can show actionable errors (e.g. missing authtoken).
+$ngrokOut = Join-Path $PWD "ngrok.out.log"
+$ngrokErr = Join-Path $PWD "ngrok.err.log"
+if (Test-Path $ngrokOut) { Remove-Item -Force $ngrokOut -ErrorAction SilentlyContinue }
+if (Test-Path $ngrokErr) { Remove-Item -Force $ngrokErr -ErrorAction SilentlyContinue }
+
+$ngrokArgs = @("http", "5678", "--log=stdout")
+try {
+    $ngrokProc = Start-Process -FilePath $ngrokCmd -ArgumentList $ngrokArgs -WindowStyle Hidden -PassThru -RedirectStandardOutput $ngrokOut -RedirectStandardError $ngrokErr
+} catch {
+    Write-Host "ERROR: Failed to start ngrok" -ForegroundColor Red
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    exit 1
+}
 
 Write-Host "Waiting for ngrok to start..." -ForegroundColor Yellow
-Start-Sleep -Seconds 5
+# ngrok's local API usually comes up on http://localhost:4040
+$tunnel = $null
+for ($i = 0; $i -lt 30; $i++) {
+    Start-Sleep -Seconds 1
+    try {
+        $response = Invoke-RestMethod -Uri "http://localhost:4040/api/tunnels" -Method Get -TimeoutSec 2
+        $tunnel = $response.tunnels | Where-Object { $_.proto -eq "https" } | Select-Object -First 1
+        if ($tunnel) { break }
+    } catch {
+        # keep waiting
+    }
+}
 
 Write-Host "Getting public URL from ngrok..." -ForegroundColor Cyan
 try {
-    $response = Invoke-RestMethod -Uri "http://localhost:4040/api/tunnels" -Method Get
-    $tunnel = $response.tunnels | Where-Object { $_.proto -eq "https" } | Select-Object -First 1
-    
     if ($tunnel) {
         $webhookUrl = $tunnel.public_url
         Write-Host "Public URL: $webhookUrl" -ForegroundColor Green
@@ -50,6 +72,13 @@ try {
         Write-Host ""
     } else {
         Write-Host "WARNING: Could not get ngrok URL. Starting n8n anyway..." -ForegroundColor Yellow
+        if (Test-Path $ngrokErr) {
+            $tail = Get-Content -Path $ngrokErr -ErrorAction SilentlyContinue | Select-Object -Last 20
+            if ($tail) {
+                Write-Host "ngrok error log (last lines):" -ForegroundColor DarkYellow
+                $tail | ForEach-Object { Write-Host $_ -ForegroundColor Gray }
+            }
+        }
     }
 } catch {
     Write-Host "WARNING: Could not get ngrok URL. Starting n8n anyway..." -ForegroundColor Yellow

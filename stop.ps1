@@ -5,15 +5,17 @@ Write-Host ""
 $listening = netstat -ano | Select-String ":5678" | Select-String "LISTENING"
 
 if ($listening) {
-    $pid = ($listening -split '\s+')[-1]
-    Write-Host "Found n8n process with PID: $pid" -ForegroundColor Cyan
+    # NOTE: $PID is an automatic, read-only variable in PowerShell (current process id).
+    # Use a different variable name to avoid "VariableNotWritable".
+    $n8nPid = ($listening -split '\s+')[-1]
+    Write-Host "Found n8n process with PID: $n8nPid" -ForegroundColor Cyan
     
     try {
-        Stop-Process -Id $pid -Force -ErrorAction Stop
-        Write-Host "Successfully stopped n8n (PID: $pid)" -ForegroundColor Green
+        Stop-Process -Id $n8nPid -Force -ErrorAction Stop
+        Write-Host "Successfully stopped n8n (PID: $n8nPid)" -ForegroundColor Green
     }
     catch {
-        Write-Host "Failed to stop process $pid" -ForegroundColor Red
+        Write-Host "Failed to stop process $n8nPid" -ForegroundColor Red
         Write-Host $_.Exception.Message
     }
 }
